@@ -1,0 +1,16 @@
+{
+  "name": "performin_side_effects",
+  "version": "1.0.0",
+  "description": "[mock-serverを使う](https://zenn.dev/joo_hashi/books/20dd2274ba88a9/viewer/5514b7)",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
