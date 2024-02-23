@@ -10,13 +10,19 @@ class TodoList extends _$TodoList {
   @override
   Future<List<Todo>> build() async => [];
 
-  // Future<void> addTodo(Todo todo) async {
-  //   await http.post(
-  //     Uri.http('localhost:3000', '/todo'),
-  //     headers: {'Content-Type': 'application/json'},
-  //     body: jsonEncode(todo.toJson()),
-  //   );
-  // }
+  Future<List<Todo>> addTodo(Todo todo) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/todo'),
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode(todo),
+    );
+    // status code 200 or 201でない場合は、例外が出てしまう!
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return [Todo.fromJson(jsonDecode(utf8.decode(response.bodyBytes)))];
+    } else {
+      throw Exception('Failed to add todo');
+    }
+  }
 
   // Future<void> addTodo(Todo todo) async {
   //   // The POST request will return a List<Todo> matching the new application state
@@ -53,24 +59,24 @@ class TodoList extends _$TodoList {
   //   await future;
   // }
 
-    Future<void> addTodo(Todo todo) async {
-    // We don't care about the API response
-    await http.post(
-      Uri.http('localhost:3000', '/todo'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(todo.toJson()),
-    );
+  // Future<void> addTodo(Todo todo) async {
+  // // We don't care about the API response
+  // await http.post(
+  //   Uri.http('localhost:3000', '/todo'),
+  //   headers: {'Content-Type': 'application/json'},
+  //   body: jsonEncode(todo.toJson()),
+  // );
 
-    // その後、手動でローカルキャッシュを更新することができる。そのためには
-    // 以前の状態を取得する。
-    // 注意： 前の状態はまだロード中かエラー状態かもしれない。
-    // これを処理する優雅な方法は、 `this.state` の代わりに `this.future` を読み込むことである。
-    // の代わりに `this.future` を読み込むことである。
-    // エラー状態の場合はエラーを投げる。
-    final previousState = await future;
+  // その後、手動でローカルキャッシュを更新することができる。そのためには
+  // 以前の状態を取得する。
+  // 注意： 前の状態はまだロード中かエラー状態かもしれない。
+  // これを処理する優雅な方法は、 `this.state` の代わりに `this.future` を読み込むことである。
+  // の代わりに `this.future` を読み込むことである。
+  // エラー状態の場合はエラーを投げる。
+  // final previousState = await future;
 
-    // 新しい状態オブジェクトを作成することで、状態を更新できる。
-    // これはすべてのリスナーに通知されます。
-    state = AsyncData([...previousState, todo]);
-  }
+  // 新しい状態オブジェクトを作成することで、状態を更新できる。
+  // これはすべてのリスナーに通知されます。
+  // state = AsyncData([...previousState, todo]);
+  // }
 }

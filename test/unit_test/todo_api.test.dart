@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -8,7 +6,7 @@ import 'package:performin_side_effects/infra/api/todo_api.dart';
 import 'package:http/http.dart' as http;
 
 import 'todo_api.test.mocks.dart';
-
+// flutter pub run build_runner watch --delete-conflicting-outputs
 @GenerateMocks([http.Client])
 void main() {
   late TodoAPI todoAPI;
@@ -35,9 +33,7 @@ void main() {
           // Act
           final result = await todoAPI.addTodo(todo);
 
-          // 第１引数には、リクエストのURLを指定する。第２引数には、リクエストのヘッダーを指定する。第３引数には、リクエストのボディを指定する。
           expect(result, isA<Todo>());
-          // expect(result, equals(todo));
           expect(result.description, equals('モックを注入しちゃうもんね!')); // 修正
           expect(result.completed, equals(true)); // 修正
         },
