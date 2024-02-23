@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:performin_side_effects/application/todo_list.dart';
 import 'package:performin_side_effects/domain/todo.dart';
+import 'package:performin_side_effects/infra/api/todo_api.dart';
 import 'package:performin_side_effects/infra/get_todo_list.dart';
 
 // class Example extends ConsumerWidget {
@@ -25,7 +26,7 @@ import 'package:performin_side_effects/infra/get_todo_list.dart';
 //                   ref
 //                       .read(todoListProvider.notifier)
 //                       .addTodo(const Todo(description: 'This is a new todo'));
-                      
+
 //                   // ここで、getTodoListProviderをinvalidateすることで、再度データを取得する
 //                   // ref.invalidate(getTodoListProvider);
 //                 },
@@ -86,47 +87,58 @@ class _ExampleState extends ConsumerState<Example> {
       appBar: AppBar(
         title: const Text('Example'),
       ),
-      body: FutureBuilder(
-      // We listen to the pending operation, to update the UI accordingly.
-      future: _pendingAddTodo,
-      builder: (context, snapshot) {
-        // Compute whether there is an error state or not.
-        // The connectionState check is here to handle when the operation is retried.
-        final isErrored = snapshot.hasError &&
-            snapshot.connectionState != ConnectionState.waiting;
-
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              style: ButtonStyle(
-                // If there is an error, we show the button in red
-                backgroundColor: MaterialStateProperty.all(
-                  isErrored ? Colors.red : null,
-                ),
-              ),
-              onPressed: () {
-                // We keep the future returned by addTodo in a variable
-                final future = ref
-                    .read(todoListProvider.notifier)
-                    .addTodo(const Todo(description: 'This is a new todo'));
-
-                // We store that future in the local state
-                setState(() {
-                  _pendingAddTodo = future;
-                });
-              },
-              child: const Text('Add todo'),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await TodoAPI().addTodo(
+            const Todo(
+              description: 'hi minn',
+              completed: false,
             ),
-            // The operation is pending, let's show a progress indicator
-            if (snapshot.connectionState == ConnectionState.waiting) ...[
-              const SizedBox(width: 8),
-              const CircularProgressIndicator(),
-            ]
-          ],
-        );
-      },
-    ),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+      body: FutureBuilder(
+        // We listen to the pending operation, to update the UI accordingly.
+        future: _pendingAddTodo,
+        builder: (context, snapshot) {
+          // Compute whether there is an error state or not.
+          // The connectionState check is here to handle when the operation is retried.
+          final isErrored = snapshot.hasError &&
+              snapshot.connectionState != ConnectionState.waiting;
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                style: ButtonStyle(
+                  // If there is an error, we show the button in red
+                  backgroundColor: MaterialStateProperty.all(
+                    isErrored ? Colors.red : null,
+                  ),
+                ),
+                onPressed: () {
+                  // We keep the future returned by addTodo in a variable
+                  final future = ref
+                      .read(todoListProvider.notifier)
+                      .addTodo(const Todo(description: 'This is a new todo'));
+
+                  // We store that future in the local state
+                  setState(() {
+                    _pendingAddTodo = future;
+                  });
+                },
+                child: const Text('Add todo'),
+              ),
+              // The operation is pending, let's show a progress indicator
+              if (snapshot.connectionState == ConnectionState.waiting) ...[
+                const SizedBox(width: 8),
+                const CircularProgressIndicator(),
+              ]
+            ],
+          );
+        },
+      ),
     );
   }
 }
